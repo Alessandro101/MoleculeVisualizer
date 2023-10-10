@@ -1,0 +1,226 @@
+<!DOCTYPE html>
+<html>
+    <title>
+        Molecule Visualizer: Add/Remove Element
+    </title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    function initializeTable(){
+    $.ajax({
+      method:"POST",
+      url: "/inittable",
+      contentType: "json",
+      success: function(data){
+        $("#rows").empty();
+        for (let i = 0; i < data.length;i++){
+          $("#rows").append("<tr><td>"+data[i][0]+"</td><td>"+data[i][2]+"</td><td>"+data[i][1]+"</td><td>"+data[i][3]+"</td><td>"+data[i][4]+"</td><td>"+data[i][5]+"</td><td>"+data[i][6]+"</td></tr>");
+        }
+      }
+    });
+  }
+    initializeTable();
+    $("#addEle").hide();
+    $("#delEle").hide();
+
+    $("#add").click(function(){
+      $("#delEle").hide();
+      $("#addEle").toggle();
+    });
+
+    $("#del").click(function(){
+      $("#addEle").hide();
+      $("#delEle").toggle();
+    });
+
+    $('#addEle').submit(function(event){
+      event.preventDefault();
+      if ($("#elementNum").val()=="" || $("#elementName").val()==""|| $("#elementCode").val()==""||$("#radius").val()==""){
+          alert("Please fill all fields");
+      }
+      else{
+      var element = {
+        elementNum: $("#elementNum").val(),
+        elementName:$("#elementName").val(),
+        elementCode:$("#elementCode").val(),
+        colour1:$("#colour1").val(),
+        colour2:$("#colour2").val(),
+        colour3:$("#colour3").val(),
+        radius:$("#radius").val(),
+      };
+
+      $.ajax({
+        method:"POST",
+        url: "/addElement",
+        data: JSON.stringify(element),
+        contentType: "json",
+        success: function(data){
+          alert($("#elementName").val() + " successfully added to the system");
+          $("#rows").empty();
+          for (let i = 0; i < data.length;i++){
+            $("#rows").append("<tr><td>"+data[i][0]+"</td><td>"+data[i][2]+"</td><td>"+data[i][1]+"</td><td>"+data[i][3]+"</td><td>"+data[i][4]+"</td><td>"+data[i][5]+"</td><td>"+data[i][6]+"</td></tr>");
+          }
+        },
+        error: function(rq, status, exception){
+            alert("Element already in system");
+        }
+      });
+    }
+    });
+
+    $('#delEle').submit(function(event){
+      event.preventDefault();
+      if ($("#delEleCode").val()==""){
+          alert("Please add an element code");
+      }
+      else{
+      var name = {
+        elementCode:$("#delEleCode").val(),
+      };
+
+      $.ajax({
+        method:"POST",
+        url: "/delElement",
+        data: JSON.stringify(name),
+        contentType: "json",
+        success: function(data){
+          alert("Element deleted from system");
+          $("#rows").empty();
+          for (let i = 0; i < data.length;i++){
+            $("#rows").append("<tr><td>"+data[i][0]+"</td><td>"+data[i][2]+"</td><td>"+data[i][1]+"</td><td>"+data[i][3]+"</td><td>"+data[i][4]+"</td><td>"+data[i][5]+"</td><td>"+data[i][6]+"</td></tr>");
+          }
+        },
+        error: function(rq, status, exception){
+            if (rq.status == 404){
+            alert("Element not found");
+          }
+        }
+      });
+    }
+    });
+
+  });
+</script>
+<h1>Add/Remove Elements</h1>
+<style>
+    body {
+        background: linear-gradient(to left, lightgreen, lightblue);
+    }
+    #options{
+        text-align: center;
+    }
+    h1 {color: black;
+        font-size: 40px;
+        text-align: center;
+        background-color: lightblue;
+        border: 5px solid black;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;}
+
+    table, th, td {border: 1px solid black;
+           background-color: white;
+           margin-left:auto;
+           margin-right:auto;
+    }
+    label{width: 150px;
+      display: inline-block;
+      text-align: center;
+    }
+    input[type=number],input[type=text],input[type=color]{
+      width:150px;
+      margin-top: 20px;
+      margin-bottom:20px;
+    }
+    input[type=submit]{
+      background-color: greenyellow;
+    }
+    form{
+      background-color: lightblue;
+      border: 1px solid black;
+      border-radius:12px;
+      width: 500px;
+      text-align: center;
+      margin-left:auto;
+      margin-right:auto;
+    }
+    button {color: black;
+            background-color: greenyellow;
+            font-size: 15px;
+            border:none;
+            border-radius: 12px;
+            width: 100px
+    }
+    button:hover{
+            background-color: white;
+            color:black;
+    }
+    ul{
+      list-style-type: none;
+      margin: 0;
+      padding: 0;
+      overflow: hidden;
+      background-color: greenyellow;
+      bottom: 0;
+      left: 0;
+      position: fixed;
+    }
+    li a {
+      display:block;
+      padding: 5px;
+      text-align: center;
+      text-decoration: none;
+
+    }
+    li a:hover{
+      background-color:white;
+    }
+
+</style>
+<body>
+<table id="elementTable">
+  <tr>
+    <th>Element Number</th>
+    <th>Element Name</th>
+    <th>Element Code</th>
+    <th>Colour 1</th>
+    <th>Colour 2</th>
+    <th>Colour 3</th>
+    <th>Radius</th>
+  </tr>
+  <tbody id="rows">
+  </tbody>
+</table>
+<div id="options">
+<button id="add">Add Element</button>
+<button id="del">Delete Element</button>
+</div>
+<form id="addEle">
+    <label for="elementNum">Element Number</label>
+    <input type="number" id="elementNum" name="elementNum" placeholder="1" min="1" max="118"></input><br>
+    <label for="elementName">Element Name</label>
+    <input type="text" id="elementName" name="elementName" placeholder="Hydrogen" pattern="[A-Za-z]+"></input><br>
+    <label for="elementCode">Element Code</label>
+    <input type="text" id="elementCode" name="elementCode" placeholder="H" maxlength="3" pattern="[A-Za-z]+"></input><br>
+    <label for="colour1">Colour 1</label>
+    <input type="color" id="colour1" name="colour1" placeholder="Colour 1"></input><br>
+    <label for="colour2">Colour 2</label>
+    <input type="color" id="colour2" name="colour2" placeholder="Colour 2"></input><br>
+    <label for="colour3">Colour 3</label>
+    <input type="color" id="colour3" name="colour3" placeholder="Colour 3"></input><br>
+    <label for="radius">Radius</label>
+    <input type="number" id="radius" name="radius" placeholder="25" min="1"></input><br>
+    <input type="submit" value="Submit">
+</form>
+<form id="delEle">
+    <label for="delEleCode">Element Code</label>
+    <input type="text" id="delEleCode" name="elementCode" placeholder="H" maxlength="3" pattern="[A-Za-z]+"></input><br>
+    <input type="submit" value="Submit">
+</form>
+<div id="nav">
+<ul>
+  <li><a href="/">Home</a></li>
+  <li><a href="/sdf.html">Upload SDF</a></li>
+  <li><a href="/displaymol.html">Display Molecule</a></li>
+</ul>
+</div>
+</body>
+</html>

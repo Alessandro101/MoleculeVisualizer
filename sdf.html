@@ -1,0 +1,107 @@
+<!DOCTYPE html>
+<html>
+    <title>
+        Molecule Visualizer: SDF Upload
+    </title>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+$(document).ready(function(){
+  $("#uploadStatus").text("Uploading file.");
+  $('#uploadStatus').hide()
+$('#upload').submit(function(event){
+  event.preventDefault();
+  $("#uploadStatus").show();
+  if ($("#molName").val() == "" ||$("#sdf_file").val() == "" ){
+    $('#uploadStatus').hide();
+    alert("Please fill all fields");
+  }
+  else{
+  var fileIn = new FormData(this);
+  $.ajax({
+    method:"POST",
+    url: "/uploadSDF",
+    data: fileIn,
+    contentType: false,
+    processData: false,
+    success: function(data){
+      $('#uploadStatus').hide();
+      alert("Successfully uploaded SDF file");
+    },
+    error: function(rq, status, exception){
+      $('#uploadStatus').hide();
+      alert("An error has occurred");
+    }
+  });
+}
+});
+});
+</script>
+<h1>Upload an SDF File</h1>
+<style>
+    body {
+        background: linear-gradient(to left, lightgreen, lightblue);
+    }
+    h1 {color: black;
+        font-size: 40px;
+        text-align: center;
+        background-color: lightblue;
+        border: 5px solid black;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;}
+    p {color: black;
+        font-size: 30px;
+        text-align: center;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;}
+   form{
+          background-color: lightblue;
+          border: 1px solid black;
+          border-radius:12px;
+          width: 500px;
+          text-align: center;
+          margin-left:auto;
+          margin-right:auto;
+     }
+   ul{
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          background-color: greenyellow;
+          bottom: 0;
+          left: 0;
+          position: fixed;
+        }
+   li a {
+          display:block;
+          padding: 5px;
+          text-align: center;
+          text-decoration: none;
+
+        }
+   li a:hover{
+          background-color:white;
+        }
+   input[type=submit]{
+          background-color: greenyellow;
+        }
+   input[type=submit]:hover{
+          background-color: white;
+        }
+</style>
+<body>
+  <form id = "upload">
+       <label for='molName'>Molecule Name</label>
+       <input type="text" id="molName" name ="molName" oninput="this.value=this.value.toUpperCase()" pattern="[A-Z]+"/><br>
+       <label for='sdf_file'>File</label>
+       <input type="file" id="sdf_file" name="filename" accept=".sdf"/><br>
+       <input type="submit" value="Upload"/>
+  </form>
+  <p id="uploadStatus"></p>
+  <div id="nav">
+  <ul>
+    <li><a href="/">Home</a></li>
+    <li><a href="/element.html">Add/Remove Elements</a></li>
+    <li><a href="/displaymol.html">Display Molecule</a></li>
+  </ul>
+  </div>
+</body>
+</html>

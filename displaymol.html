@@ -1,0 +1,189 @@
+<!DOCTYPE html>
+<html>
+    <title>
+        Molecule Visualizer: Selection and Display
+    </title>
+<h1>Display Molecule</h1>
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.3/jquery.min.js"></script>
+<script>
+  $(document).ready(function(){
+    $("#display").hide();
+    function initializeList(){
+      $.ajax({
+        method:"POST",
+        url: "/initList",
+        contentType: "json",
+        success: function(data){
+          for (let i = 0; i < data.length;i++){
+            $("#molecules").append("<button value="+data[i][0]+">"+data[i][0]+"<br> Atoms:"+data[i][1]+"<br> Bonds:"+data[i][2]+"</button>");
+          }
+        }
+      });
+    }
+    initializeList();
+    $(document).on("click","button",function(){
+      var value = {
+        molName: $(this).val(),
+      };
+      $.ajax({
+        method:"POST",
+        url: "/loadMol",
+        data: JSON.stringify(value),
+        contentType: "json",
+        success: function(data){
+          $("#display").show()
+          $("#molBody").empty()
+          $("#molBody").append(data)
+        }
+      });
+    });
+    $("#xRot").submit(function(event){
+      event.preventDefault();
+      var value = {
+        xRotation: $("#xRotation").val(),
+      };
+      $.ajax({
+        method:"POST",
+        url: "/xrotation",
+        data: JSON.stringify(value),
+        contentType: "json",
+        success: function(data){
+          $("#molBody").empty()
+          $("#molBody").append(data)
+        }
+      });
+    });
+    $("#yRot").submit(function(){
+      event.preventDefault();
+      var value = {
+        yRotation: $("#yRotation").val(),
+      };
+      $.ajax({
+        method:"POST",
+        url: "/yrotation",
+        data: JSON.stringify(value),
+        contentType: "json",
+        success: function(data){
+          $("#molBody").empty()
+          $("#molBody").append(data)
+        }
+      });
+
+    });
+    $("#zRot").submit(function(){
+      event.preventDefault();
+      var value = {
+        zRotation: $("#zRotation").val(),
+      };
+      $.ajax({
+        method:"POST",
+        url: "/zrotation",
+        data: JSON.stringify(value),
+        contentType: "json",
+        success: function(data){
+          $("#molBody").empty()
+          $("#molBody").append(data)
+        }
+      });
+
+    });
+  });
+</script>
+<style>
+    body {
+        background: linear-gradient(to left, lightgreen, lightblue);
+        background-size: cover;
+    }
+    h1 {color: black;
+        font-size: 40px;
+        text-align: center;
+        background-color: lightblue;
+        border: 5px solid black;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;}
+    p {color: black;
+        font-size: 30px;
+        text-align: center;
+        font-family: Verdana, Geneva, Tahoma, sans-serif;}
+    form{
+        text-align: center;
+        margin-left:auto;
+        margin-right:auto;
+      }
+    input{
+        margin-top: 10px;
+        margin-bottom: 20px;
+    }
+    ul{
+          list-style-type: none;
+          margin: 0;
+          padding: 0;
+          overflow: hidden;
+          background-color: greenyellow;
+          bottom: 0;
+          left: 0;
+          position: fixed;
+        }
+    li a {
+          display:block;
+          padding: 5px;
+          text-align: center;
+          text-decoration: none;
+
+        }
+    li a:hover{
+          background-color:white;
+        }
+    #molBody{
+          overflow: auto;
+          background-color: lightgrey;
+          border: 1px solid black;
+          padding: 12px;
+    }
+    #molecules{
+          overflow: auto;
+    }
+    button {color: black;
+            background-color: greenyellow;
+            font-size: 15px;
+            border:none;
+            border-radius: 12px;
+            width: 100px
+    }
+    button:hover{
+            background-color: white;
+            color:black;
+    }
+</style>
+<body>
+<div id ="moleculeList">
+  <p>Select Molecule</p>
+  <div id="molecules">
+  </div>
+</div>
+<div id="display">
+  <p id="molName"></p>
+  <div id="molBody">
+  </div>
+  <form id="xRot">
+    <input type="number" id="xRotation" placeholder="X rotation"/>
+    <input type="submit" value="Rotate on X axis"/>
+  </form>
+  <form id="yRot">
+    <input type="number" id="yRotation" placeholder="Y rotation"/>
+    <input type="submit" value="Rotate on Y axis"/>
+  </form>
+  <form id="zRot">
+    <input type="number" id="zRotation" placeholder="Z rotation"/>
+    <input type="submit" value="Rotate on Z axis"/>
+  </form>
+</div>
+<div id="nav">
+<ul>
+  <li><a href="/">Home</a></li>
+  <li><a href="/element.html">Add/Remove Elements</a></li>
+  <li><a href="/sdf.html">Upload SDF</a></li>
+</ul>
+</div>
+
+</body>
+</html>
