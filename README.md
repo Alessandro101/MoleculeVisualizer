@@ -8,3 +8,4 @@ make testpy
 ```
 python3 server.py PORT#
 ```
+Open index.html
